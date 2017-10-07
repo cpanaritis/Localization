@@ -2,7 +2,8 @@
 
 package ca.mcgill.ecse211.localizationlab;
 
-import ca.mcgill.ecse211.localizationlab.USLocalization.LocalizationState;
+import ca.mcgill.ecse211.localizationlab.UltrasonicLocalizer.LocalizationState;
+import ca.mcgill.ecse211.localizationlab.Navigation;
 import lejos.hardware.Button;
 import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.lcd.TextLCD;
@@ -40,7 +41,6 @@ public static void main(String[] args) {
     LCDDisplay lcdDisplay = new LCDDisplay(odometer, t, usSensor, usData);
     Navigation navigation = new Navigation(leftMotor, rightMotor, WHEEL_RADIUS, WHEEL_RADIUS, TRACK, odometer);
     
-    USLocalization localizer = new USLocalization(odometer, LocalizationState.FALLING_EDGE, usSensor, usData, navigation);
     
     //Display
     int buttonChoice;
@@ -49,18 +49,30 @@ public static void main(String[] args) {
     	t.clear();
 
     	// ask the user to start localizing
-    	t.drawString("Localization    ", 0, 0);
-    	t.drawString("                ", 0, 1);
-    	t.drawString("Press Enter to  ", 0, 2);
-    	t.drawString("begin.          ", 0, 3);
+    	 t.drawString("< Left | Right >", 0, 0);
+     t.drawString("       |        ", 0, 1);
+     t.drawString("Falling| Rising ", 0, 2);
+     t.drawString(" Edge  | Edge   ", 0, 3);
+     t.drawString("       |        ", 0, 4);
+     
     	buttonChoice = Button.waitForAnyPress();
-    	} while (buttonChoice != Button.ID_ENTER);
+    	} while (buttonChoice != Button.ID_LEFT && buttonChoice != Button.ID_RIGHT);
 
-    	odometer.start();
-    	lcdDisplay.start();
-    	localizer.localize();
+    if (buttonChoice == Button.ID_LEFT) {
+    		UltrasonicLocalizer localizer = new UltrasonicLocalizer(odometer, LocalizationState.FALLING_EDGE, usSensor, usData, navigation);
+    		odometer.start();
+    		lcdDisplay.start();
+    		localizer.localize();
+    } 
+    else {
+    		UltrasonicLocalizer localizer = new UltrasonicLocalizer(odometer, LocalizationState.RISING_EDGE, usSensor, usData, navigation);
+    		odometer.start();
+    		lcdDisplay.start();
+    		localizer.localize();
+    }
+
     	
-    	while(Button.waitForAnyPress() != Button.ID_ENTER);
+    	while(Button.waitForAnyPress() != Button.ID_ESCAPE);
     	System.exit(0);
 
     

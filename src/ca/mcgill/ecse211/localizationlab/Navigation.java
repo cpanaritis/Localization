@@ -12,8 +12,8 @@ import lejos.hardware.motor.EV3LargeRegulatedMotor;
  */
 public class Navigation {
 	
-  private static final int FORWARD_SPEED = 200;
-  private static final int ROTATE_SPEED = 100;
+  private static final int FORWARD_SPEED = 50;
+  private static final int ROTATE_SPEED = 50;
   private static double[][] waypoints = new double[][] {
 	  										{1, 0, 2, 2, 1 },  // Row 0 is x coordinates
 	  										{1, 2, 2, 1, 0 } };// Row 1 is y coordinates
