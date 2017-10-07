@@ -10,7 +10,7 @@ public class LCDDisplay extends Thread{
   private SampleProvider usSensor;
   private float[] usData;
 
-  // constructor
+  // constructor 
   public LCDDisplay(Odometer odometer, TextLCD t, SampleProvider usSensor, float[] usData) {
     this.odometer = odometer;
     this.t = t;

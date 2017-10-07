@@ -93,7 +93,7 @@ public class USLocalization {
 		}
 			isCompleted = false;
 			
-	}
+	} 
 	private double calculateTheta(double firstAngle, double secondAngle){
 		if(firstAngle < secondAngle){
 			return 40 - (firstAngle + secondAngle) / 2;
