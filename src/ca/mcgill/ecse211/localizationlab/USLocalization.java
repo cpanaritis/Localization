@@ -60,7 +60,7 @@ public class USLocalization {
 			odometer.setPosition(new double[] {0.0, 0.0, newTheta}, new boolean[]{true,true,true});
 			
 			navigation.turnTo(newTheta);
-			
+			 
 		}
 	}
 	
