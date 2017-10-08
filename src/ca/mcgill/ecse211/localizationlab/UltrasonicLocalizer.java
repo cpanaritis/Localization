@@ -10,7 +10,7 @@ public class UltrasonicLocalizer {
 	private SampleProvider usSensor;
 	private Odometer odometer;
 	private float[] usData;
-	private LocalizationState state;
+	public static LocalizationState state;
 	private Navigation navigation;
 	
 	//Constants 

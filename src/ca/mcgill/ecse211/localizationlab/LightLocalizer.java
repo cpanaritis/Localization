@@ -1,6 +1,7 @@
 package ca.mcgill.ecse211.localizationlab;
 
 import ca.mcgill.ecse211.localizationlab.UltrasonicLocalizer.LocalizationState;
+import lejos.hardware.Button;
 import lejos.hardware.Sound;
 import lejos.robotics.SampleProvider;
 
@@ -10,8 +11,8 @@ public class LightLocalizer extends Thread {
 	private SampleProvider colorSample;
 	private float [] lightData;
 	private Navigation navigation;
-	private float [] scaledColor = new float[2];
-	private double [] collectedData = new double[6];
+	private float scaledColor;
+	private double [] collectedData = new double[5];
 	private int i = 0;
 	
 	//Constant(s)
@@ -31,28 +32,13 @@ public class LightLocalizer extends Thread {
 			correctionStart = System.currentTimeMillis();
 			colorSample.fetchSample(lightData, 0); // Get data from color sensor
 			
-			//if(scaledColor[0] == 0) {
-			//	scaledColor[0] = lightData[0]*1000;
-			//}
-			//else {
-				scaledColor[1] = lightData[0]*1000; 
+			scaledColor = lightData[0]*1000; 
 		    // Collect data during the ultrasonic localization is running
-		    if(scaledColor[1] < 250) {
+		    if(scaledColor < 250) {
 		    		Sound.beep();
 		    		//implement collecting data here
 		    		collectedData[i] = odometer.getTheta();
 		    		i++;
-		    }
-		    		//scaledColor[0] = scaledColor[1];
-			//}
-		    
-		    // After ultrasonic localization has ran perform the light sensor localization
-		    while(!(UltrasonicLocalizer.active)){
-		    		//implement travel to here
-		    		for(int x=0; x < collectedData.length; x++) {
-		    			System.out.println(collectedData[x]); 
-		    		}
-		    		System.exit(0);
 		    }
 			
 			// this ensure the lightLocalizer occurs only once every period
@@ -69,7 +55,23 @@ public class LightLocalizer extends Thread {
 		}
 	}
 	
+	void startLightLocalization() {
+		int buttonChoice;
+		buttonChoice = Button.waitForAnyPress();
+		//while ();{
 	
+			if(UltrasonicLocalizer.state == LocalizationState.FALLING_EDGE) {
+		
+			}
+			else {
+		
+			}
+			for(int x=0; x < collectedData.length; x++) {
+				System.out.println(collectedData[x]); 
+			}
+			System.exit(0);
+	 	//}
+	}
 	
 	
 }
