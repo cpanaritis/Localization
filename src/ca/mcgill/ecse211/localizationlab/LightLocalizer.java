@@ -76,18 +76,12 @@ public class LightLocalizer extends Thread {
 	 * localize and go to origin
 	 */
 	void startLightLocalization() {
-		if(UltrasonicLocalizer.state == LocalizationState.RISING_EDGE) {	
-			getStart();
-			goToOrigin();	
-		}
-		else {
 			getStart();
 			goToOrigin();
-		}
 	}
 	
 	/**
-	 * @return the start of the array
+	 * @return the position in the array that are the y axis starting point.
 	 */
 	int getStart() {
 		endCounter =true;
@@ -109,20 +103,14 @@ public class LightLocalizer extends Thread {
 	 * Goes to the origin 
 	 */
 	void goToOrigin() {
-		
-		System.out.println(startArray);
-		
+		//Arc angle from the first time you encounter and axis till the end. 
 		thetaX = collectedData[startArray+3]-collectedData[startArray+1];
 		thetaY = collectedData[startArray+2]-collectedData[startArray];
-		
+		//Set the new/actual position of the robot.
 		odometer.setY(-sensorToTrack*Math.cos(Math.toRadians(thetaY/2)));
 		odometer.setX(-sensorToTrack*Math.cos(Math.toRadians(thetaX/2)));
 
-		System.out.println(odometer.getX());
-		System.out.println(odometer.getY());
-		System.out.println(thetaX);
-		System.out.println(thetaY);
-		
+		//Navigate to the origin. 
 		navigation.travelTo(0,0);
 	}
 }
