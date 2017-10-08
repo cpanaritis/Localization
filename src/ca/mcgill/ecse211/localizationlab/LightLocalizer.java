@@ -60,33 +60,49 @@ public class LightLocalizer extends Thread {
 	}
 	
 	void startLightLocalization() {
-		tmpMax = Math.abs(collectedData[0] - collectedData[1]);
 		if(UltrasonicLocalizer.state == LocalizationState.RISING_EDGE) {	
-			startArray = 0;
-			for(int j=2; j<collectedData.length; j++) {
-				if(tmpMax< Math.abs(collectedData[j-1]-collectedData[j]) && collectedData[j] != 0) {
-					tmpMax = Math.abs(collectedData[j-1]-collectedData[j]);
-					startArray = j;
-				}
-			}
+			getStart();
+			System.out.println(startArray);
 			
-			thetaX = collectedData[startArray+1]-collectedData[startArray+3];
-			thetaY = collectedData[startArray]-collectedData[startArray+2];
+			thetaX = collectedData[startArray]-collectedData[startArray+2];
+			thetaY = collectedData[startArray-1]-collectedData[startArray+1];
 			
 			odometer.setY(-sensorToTrack*Math.cos(Math.toRadians(thetaY/2)));
 			odometer.setX(-sensorToTrack*Math.cos(Math.toRadians(thetaX/2)));
-			System.out.println(odometer.getX());
-			System.out.println(odometer.getY());
 
 			navigation.travelTo(0,0);
 			
 		}
 		else {
+			getStart();
+			System.out.println(startArray);
+			
+			thetaX = collectedData[startArray]-collectedData[startArray+2];
+			thetaY = collectedData[startArray-1]-collectedData[startArray+1];
 			
 			odometer.setY(-sensorToTrack*Math.cos(Math.toRadians(thetaY/2)));
 			odometer.setX(-sensorToTrack*Math.cos(Math.toRadians(thetaX/2)));
 			
 			navigation.travelTo(0,0);
 		}
+	}
+	
+	int getStart() {
+		tmpMax = Math.abs(collectedData[0] - collectedData[1]);
+		startArray = 1;
+		double newMax;
+		for(int j=2; j<collectedData.length; j++) {
+			if(collectedData[j-1]>collectedData[j]) {
+				newMax = collectedData[j-1] - (360+collectedData[j]);
+			}
+			else {
+				newMax = collectedData[j-1] - collectedData[j];
+			}
+			if(tmpMax< Math.abs(newMax) && collectedData[j] != 0) {
+				tmpMax = Math.abs(collectedData[j-1]-collectedData[j]);
+				startArray = j;
+			}
+		}
+		return startArray;
 	}
 }

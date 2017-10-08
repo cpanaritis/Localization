@@ -14,7 +14,7 @@ public class UltrasonicLocalizer {
 	private Navigation navigation;
 	
 	//Constants 
-	private final int THRESHOLD_WALL = 45;
+	private final int THRESHOLD_WALL = 35;
 	private final int NOISE_GAP = 1;
 	private final int TURN_SPEED = 50;
 	

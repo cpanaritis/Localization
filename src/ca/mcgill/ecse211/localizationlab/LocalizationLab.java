@@ -66,8 +66,8 @@ public static void main(String[] args) {
     		UltrasonicLocalizer localizer = new UltrasonicLocalizer(odometer, LocalizationState.FALLING_EDGE, usSensor, usData, navigation);
     		odometer.start();
     		lcdDisplay.start();
-    		localizer.localize();
     		lightLocalizer.start();
+    		localizer.localize();
     } 
     else {
     		UltrasonicLocalizer localizer = new UltrasonicLocalizer(odometer, LocalizationState.RISING_EDGE, usSensor, usData, navigation);
