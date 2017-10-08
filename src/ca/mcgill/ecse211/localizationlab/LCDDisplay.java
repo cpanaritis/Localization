@@ -3,6 +3,10 @@ package ca.mcgill.ecse211.localizationlab;
 import lejos.hardware.lcd.TextLCD;
 import lejos.robotics.SampleProvider;
 
+/**
+ * @author Christos Panaritis and Kevin Chuong
+ *
+ */
 public class LCDDisplay extends Thread{
   private static final long DISPLAY_PERIOD = 250;
   private Odometer odometer;
@@ -11,7 +15,13 @@ public class LCDDisplay extends Thread{
   private float[] usData;
 
   // constructor 
-  public LCDDisplay(Odometer odometer, TextLCD t, SampleProvider usSensor, float[] usData) {
+  /**
+ * @param odometer
+ * @param t
+ * @param usSensor
+ * @param usData
+ */
+public LCDDisplay(Odometer odometer, TextLCD t, SampleProvider usSensor, float[] usData) {
     this.odometer = odometer;
     this.t = t;
     this.usSensor = usSensor;
@@ -19,7 +29,10 @@ public class LCDDisplay extends Thread{
   }
 
   // run method (required for Thread)
-  public void run() {
+  /* (non-Javadoc)
+ * @see java.lang.Thread#run()
+ */
+public void run() {
     long displayStart, displayEnd;
     double[] position = new double[3];
 
@@ -56,11 +69,19 @@ public class LCDDisplay extends Thread{
       }
     }
   }
-  private double getDistanceValue() {
+  /**
+ * @return
+ */
+private double getDistanceValue() {
 	  usSensor.fetchSample(usData, 0);
 	  return usData[0]*100;
   }
-  private static String formattedDoubleToString(double x, int places) {
+  /**
+ * @param x
+ * @param places
+ * @return
+ */
+private static String formattedDoubleToString(double x, int places) {
     String result = "";
     String stack = "";
     long t;

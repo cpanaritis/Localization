@@ -4,6 +4,10 @@ import lejos.robotics.SampleProvider;
 
 
 
+/**
+ * @author Christos Panaritis and Kevin Chuong
+ *
+ */
 public class UltrasonicLocalizer {
 	
 	public enum LocalizationState { FALLING_EDGE, RISING_EDGE };
@@ -26,6 +30,14 @@ public class UltrasonicLocalizer {
 	
 	
 	
+	/**
+	 * Constructor
+	 * @param odometer
+	 * @param state
+	 * @param usSensor
+	 * @param usData
+	 * @param navigation
+	 */
 	public UltrasonicLocalizer (Odometer odometer, LocalizationState state, SampleProvider usSensor, float[] usData, Navigation navigation){
 		this.odometer = odometer;
 		this.state = state;
@@ -34,6 +46,9 @@ public class UltrasonicLocalizer {
 		this.navigation = navigation;
 	}
 	
+	/**
+	 * localizes the 0 degree
+	 */
 	public void localize(){
 		
 		 double firstAngle;
@@ -55,10 +70,11 @@ public class UltrasonicLocalizer {
 			lastAngle = odometer.getTheta();
 			
 			//Calculate the deltaTheta
-			deltaTheta = calculateTheta(firstAngle, lastAngle);
+			deltaTheta = calculateTheta(lastAngle, firstAngle);
 			newTheta = odometer.getTheta() + deltaTheta;
 			
 			odometer.setPosition(new double[] {0.0, 0.0, newTheta}, new boolean[]{true,true,true});
+			
 			
 			//Make the robot turn to the calculated 0
 			navigation.turnTo(359 - newTheta);
@@ -80,7 +96,7 @@ public class UltrasonicLocalizer {
 			newTheta = odometer.getTheta() + deltaTheta;
 			
 			odometer.setPosition(new double[] {0.0, 0.0, newTheta}, new boolean[]{true,true,true});
-			
+			System.out.println(newTheta);
 			//Make the robot turn to the calculated 0
 			navigation.turnTo(359 - newTheta);
 			
@@ -88,6 +104,9 @@ public class UltrasonicLocalizer {
 		active = false;
 	}
 	
+	/**
+	 * Turns towards the wall. Falling edge.
+	 */
 	private void turnToWall(){
 		while(!isCompleted){
 			setSpeed(TURN_SPEED);
@@ -103,6 +122,9 @@ public class UltrasonicLocalizer {
 		isCompleted = false;	
 		
 	}
+	/**
+	 * Turns away from wall. Rising edge.
+	 */
 	private void turnAwayFromWall(){
 		while(!isCompleted){
 			setSpeed(TURN_SPEED);
@@ -118,6 +140,12 @@ public class UltrasonicLocalizer {
 			isCompleted = false;
 			
 	} 
+	
+	/**
+	 * @param firstAngle
+	 * @param secondAngle
+	 * @return
+	 */
 	private double calculateTheta(double firstAngle, double secondAngle){
 		if(firstAngle < secondAngle){
 			return 40 - (firstAngle + secondAngle) / 2;
@@ -126,10 +154,16 @@ public class UltrasonicLocalizer {
 			return 220 - (firstAngle + secondAngle) / 2;
 		}
 	}
+	/**
+	 * @return
+	 */
 	public double getDistanceValue(){
 		usSensor.fetchSample(usData, 0);
 		  return usData[0]*100;
 	}
+	/**
+	 * @param speed
+	 */
 	public void setSpeed(int speed){
 		LocalizationLab.leftMotor.setSpeed(speed);
 		LocalizationLab.rightMotor.setSpeed(speed);

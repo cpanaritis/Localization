@@ -15,6 +15,10 @@ import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.hardware.sensor.SensorModes;
 import lejos.robotics.SampleProvider;
 
+/**
+ * @author Christos Panaritis and Kevin Chuong
+ *
+ */
 public class LocalizationLab {
 
   static final EV3LargeRegulatedMotor leftMotor =
@@ -30,6 +34,9 @@ public class LocalizationLab {
   public static final double TRACK = 12.16;
   public static final double GRID_LENGTH = 30.48;
 
+/**
+ * @param args
+ */
 public static void main(String[] args) {
     
     // Setup Ultrasonic sensor to obtain information on distance.
