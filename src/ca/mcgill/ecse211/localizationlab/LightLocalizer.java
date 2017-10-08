@@ -14,9 +14,11 @@ public class LightLocalizer extends Thread {
 	private float scaledColor;
 	private double [] collectedData = new double[5];
 	private int i = 0;
+	private double x, y, thetaX, thetaY, thetaMinusY, deltaTheta;
 	
 	//Constant(s)
 	private static final long CORRECTION_PERIOD = 10;
+	private static final double sensorToTrack = 14.2;
 	
 	
 	public LightLocalizer (Odometer odometer, SampleProvider colorSample, float [] lightData, Navigation navigation) {
@@ -57,18 +59,22 @@ public class LightLocalizer extends Thread {
 	
 	void startLightLocalization() {
 
-	
-			if(UltrasonicLocalizer.state == LocalizationState.FALLING_EDGE) {
-		
-			}
-			else {
-		
-			}
-			for(int x=0; x < collectedData.length; x++) {
-				System.out.println(collectedData[x]); 
-			}
-			System.exit(0);
+		if(UltrasonicLocalizer.state == LocalizationState.RISING_EDGE) {
+			thetaX = collectedData[1]-collectedData[2];
+			thetaY = collectedData[3]-collectedData[4];
+			thetaMinusY = collectedData[4];
+			odometer.setY(-sensorToTrack*Math.cos(Math.toRadians(thetaY/2)));
+			odometer.setX(-sensorToTrack*Math.cos(Math.toRadians(thetaX/2)));
+			deltaTheta = 90 - (thetaMinusY-180) + thetaY/2;
+			System.out.println("deltaTheta: " + deltaTheta);
+			System.out.println("thetaX: " + thetaX);
+			System.out.println("thetaY: " + thetaY);
+			System.out.println("thetaMinusY: " + thetaMinusY);
+			//odometer.setTheta(odometer.getTheta() + deltaTheta);
+			//navigation.travelTo(0,0);
+		}
+		//else {
+			
+		//}
 	}
-	
-	
 }
