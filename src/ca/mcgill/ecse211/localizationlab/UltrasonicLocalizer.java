@@ -20,6 +20,7 @@ public class UltrasonicLocalizer {
 	
 	//Booleans
 	private boolean isCompleted = false;
+	public static boolean active = true;
 	
 	
 	
@@ -59,7 +60,8 @@ public class UltrasonicLocalizer {
 			
 			odometer.setPosition(new double[] {0.0, 0.0, newTheta}, new boolean[]{true,true,true});
 			
-			navigation.turnTo(newTheta);
+			//Make the robot turn to the calculated 0
+			navigation.turnTo(359 - newTheta);
 			 
 		}
 		else {
@@ -79,9 +81,11 @@ public class UltrasonicLocalizer {
 			
 			odometer.setPosition(new double[] {0.0, 0.0, newTheta}, new boolean[]{true,true,true});
 			
-			navigation.turnTo(newTheta);
+			//Make the robot turn to the calculated 0
+			navigation.turnTo(359 - newTheta);
 			
 		}
+		active = false;
 	}
 	
 	private void turnToWall(){

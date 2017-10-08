@@ -23,10 +23,11 @@ public class LocalizationLab {
   static final EV3LargeRegulatedMotor rightMotor =
       new EV3LargeRegulatedMotor(LocalEV3.get().getPort("B"));
   private static final Port usPort = LocalEV3.get().getPort("S4");
+  private static final EV3ColorSensor lightSensor = new EV3ColorSensor(LocalEV3.get().getPort("S3"));
   public static final EV3LargeRegulatedMotor sensorMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("D"));
 
-  public static final double WHEEL_RADIUS = 2.1;
-  public static final double TRACK = 12.5;
+  public static final double WHEEL_RADIUS = 2.15;
+  public static final double TRACK = 12.16;
   public static final double GRID_LENGTH = 30.48;
 
 public static void main(String[] args) {
@@ -40,7 +41,10 @@ public static void main(String[] args) {
     final TextLCD t = LocalEV3.get().getTextLCD();
     LCDDisplay lcdDisplay = new LCDDisplay(odometer, t, usSensor, usData);
     Navigation navigation = new Navigation(leftMotor, rightMotor, WHEEL_RADIUS, WHEEL_RADIUS, TRACK, odometer);
-    
+    // Setup Light sensor to obtain data
+    SampleProvider colorSample = lightSensor.getMode("Red");
+    float [] lightData = new float[colorSample.sampleSize()];
+    LightLocalizer lightLocalizer = new LightLocalizer(odometer, colorSample, lightData, navigation);
     
     //Display
     int buttonChoice;
@@ -63,11 +67,13 @@ public static void main(String[] args) {
     		odometer.start();
     		lcdDisplay.start();
     		localizer.localize();
+    		lightLocalizer.start();
     } 
     else {
     		UltrasonicLocalizer localizer = new UltrasonicLocalizer(odometer, LocalizationState.RISING_EDGE, usSensor, usData, navigation);
     		odometer.start();
     		lcdDisplay.start();
+    		lightLocalizer.start();
     		localizer.localize();
     }
 

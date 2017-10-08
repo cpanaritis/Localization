@@ -19,6 +19,7 @@ public class Navigation {
 	  										{1, 2, 2, 1, 0 } };// Row 1 is y coordinates
   public EV3LargeRegulatedMotor leftMotor;
   public EV3LargeRegulatedMotor rightMotor;
+  double amountTurned;
   private double radius;
   private double width;
   private Odometer odometer;
@@ -85,12 +86,14 @@ void travelTo(double x, double y) {
  * @param theta
  * finds what the robot should rotate at.
  */
+
+//DOES NOT WORK IN THREAD --> FIGURE THAT OUT
 void turnTo(double theta) {
-	  navigating = true;
-	  leftMotor.setSpeed(ROTATE_SPEED);
-      rightMotor.setSpeed(ROTATE_SPEED);
-      leftMotor.rotate(convertAngle(radius, width, theta), true);
-    	  rightMotor.rotate(-convertAngle(radius, width,  theta), false);  
+	
+	leftMotor.setSpeed(ROTATE_SPEED);
+    rightMotor.setSpeed(ROTATE_SPEED);
+    leftMotor.rotate(convertAngle(radius, width, theta), true);
+  	rightMotor.rotate(-convertAngle(radius, width, theta), false); 
   }
   
   /**
