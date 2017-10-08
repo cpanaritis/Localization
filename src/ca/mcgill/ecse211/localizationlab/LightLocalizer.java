@@ -10,8 +10,13 @@ public class LightLocalizer extends Thread {
 	private SampleProvider colorSample;
 	private float [] lightData;
 	private Navigation navigation;
-	private float scaledColor;
+	private float [] scaledColor = new float[2];
+	private double [] collectedData = new double[6];
+	private int i = 0;
+	
+	//Constant(s)
 	private static final long CORRECTION_PERIOD = 10;
+	
 	
 	public LightLocalizer (Odometer odometer, SampleProvider colorSample, float [] lightData, Navigation navigation) {
 		this.odometer = odometer;
@@ -25,17 +30,29 @@ public class LightLocalizer extends Thread {
 		while(true) {
 			correctionStart = System.currentTimeMillis();
 			colorSample.fetchSample(lightData, 0); // Get data from color sensor
-		    scaledColor = lightData[0]*1000;
-		    
+			
+			//if(scaledColor[0] == 0) {
+			//	scaledColor[0] = lightData[0]*1000;
+			//}
+			//else {
+				scaledColor[1] = lightData[0]*1000; 
 		    // Collect data during the ultrasonic localization is running
-		    if(scaledColor <= 300) {
+		    if(scaledColor[1] < 250) {
 		    		Sound.beep();
 		    		//implement collecting data here
-		    } 
+		    		collectedData[i] = odometer.getTheta();
+		    		i++;
+		    }
+		    		//scaledColor[0] = scaledColor[1];
+			//}
 		    
 		    // After ultrasonic localization has ran perform the light sensor localization
 		    while(!(UltrasonicLocalizer.active)){
 		    		//implement travel to here
+		    		for(int x=0; x < collectedData.length; x++) {
+		    			System.out.println(collectedData[x]); 
+		    		}
+		    		System.exit(0);
 		    }
 			
 			// this ensure the lightLocalizer occurs only once every period
