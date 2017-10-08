@@ -61,7 +61,7 @@ void travelTo(double x, double y) {
 	  double deltaY = y - odometer.getY();
 	  double deltaX = x - odometer.getX();
 	  
-		  double thetaD = Math.atan2(deltaX,deltaY);
+		  double thetaD = Math.toDegrees(Math.atan2(deltaX,deltaY));
 		  double thetaTurn = thetaD - odometer.getTheta();
 		  if(thetaTurn < -180.0) {
 			  turnTo(360.0 + thetaTurn);
@@ -78,7 +78,7 @@ void travelTo(double x, double y) {
       rightMotor.setSpeed(FORWARD_SPEED);
       double distance = Math.sqrt(deltaX*deltaX + deltaY*deltaY);
       leftMotor.rotate(convertDistance(radius, distance), true);
-      rightMotor.rotate(convertDistance(radius, distance), true);
+      rightMotor.rotate(convertDistance(radius, distance), false);
      
   }
   

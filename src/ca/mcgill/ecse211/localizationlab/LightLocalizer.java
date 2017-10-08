@@ -12,9 +12,11 @@ public class LightLocalizer extends Thread {
 	private float [] lightData;
 	private Navigation navigation;
 	private float scaledColor;
-	private double [] collectedData = new double[5];
+	private double [] collectedData = {0,0,0,0,0,0,0};
 	private int i = 0;
-	private double x, y, thetaX, thetaY, thetaMinusY, deltaTheta;
+	private double thetaX, thetaY;
+	private double tmpMax;
+	private int startArray;
 	
 	//Constant(s)
 	private static final long CORRECTION_PERIOD = 10;
@@ -58,23 +60,33 @@ public class LightLocalizer extends Thread {
 	}
 	
 	void startLightLocalization() {
-
-		if(UltrasonicLocalizer.state == LocalizationState.RISING_EDGE) {
-			thetaX = collectedData[1]-collectedData[2];
-			thetaY = collectedData[3]-collectedData[4];
-			thetaMinusY = collectedData[4];
+		tmpMax = Math.abs(collectedData[0] - collectedData[1]);
+		if(UltrasonicLocalizer.state == LocalizationState.RISING_EDGE) {	
+			startArray = 0;
+			for(int j=2; j<collectedData.length; j++) {
+				if(tmpMax< Math.abs(collectedData[j-1]-collectedData[j]) && collectedData[j] != 0) {
+					tmpMax = Math.abs(collectedData[j-1]-collectedData[j]);
+					startArray = j;
+				}
+			}
+			
+			thetaX = collectedData[startArray+1]-collectedData[startArray+3];
+			thetaY = collectedData[startArray]-collectedData[startArray+2];
+			
 			odometer.setY(-sensorToTrack*Math.cos(Math.toRadians(thetaY/2)));
 			odometer.setX(-sensorToTrack*Math.cos(Math.toRadians(thetaX/2)));
-			deltaTheta = 90 - (thetaMinusY-180) + thetaY/2;
-			System.out.println("deltaTheta: " + deltaTheta);
-			System.out.println("thetaX: " + thetaX);
-			System.out.println("thetaY: " + thetaY);
-			System.out.println("thetaMinusY: " + thetaMinusY);
-			//odometer.setTheta(odometer.getTheta() + deltaTheta);
-			//navigation.travelTo(0,0);
-		}
-		//else {
+			System.out.println(odometer.getX());
+			System.out.println(odometer.getY());
+
+			navigation.travelTo(0,0);
 			
-		//}
+		}
+		else {
+			
+			odometer.setY(-sensorToTrack*Math.cos(Math.toRadians(thetaY/2)));
+			odometer.setX(-sensorToTrack*Math.cos(Math.toRadians(thetaX/2)));
+			
+			navigation.travelTo(0,0);
+		}
 	}
 }
