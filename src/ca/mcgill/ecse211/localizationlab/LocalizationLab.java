@@ -76,7 +76,8 @@ public static void main(String[] args) {
     		lightLocalizer.start();
     		localizer.localize();
     }
-    
+    while(Button.waitForAnyPress() != Button.ID_ENTER);
+    lightLocalizer.startLightLocalization();
     	
     	while(Button.waitForAnyPress() != Button.ID_ESCAPE);
     	System.exit(0);

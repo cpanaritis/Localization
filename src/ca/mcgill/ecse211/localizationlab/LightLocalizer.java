@@ -56,9 +56,7 @@ public class LightLocalizer extends Thread {
 	}
 	
 	void startLightLocalization() {
-		int buttonChoice;
-		buttonChoice = Button.waitForAnyPress();
-		//while ();{
+
 	
 			if(UltrasonicLocalizer.state == LocalizationState.FALLING_EDGE) {
 		
@@ -70,7 +68,6 @@ public class LightLocalizer extends Thread {
 				System.out.println(collectedData[x]); 
 			}
 			System.exit(0);
-	 	//}
 	}
 	
 	
