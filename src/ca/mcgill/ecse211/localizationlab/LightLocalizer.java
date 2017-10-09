@@ -9,19 +9,18 @@ import lejos.robotics.SampleProvider;
  * @author Christos Panaritis and Keving Chuong
  *
  */
-public class LightLocalizer {
+public class LightLocalizer extends Thread {
 	
 	private Odometer odometer;
 	private SampleProvider colorSample;
 	private float [] lightData;
 	private Navigation navigation;
 	private float scaledColor;
-	private double [] collectedData = {0,0,0,0,0,0,0};
+	private double [] collectedData = new double [4];
 	private int i = 0;
 	private double thetaX, thetaY;
 	private int startArray;
 	private boolean endCounter;
-	private boolean fullCircle;
 	
 	//Constant(s)
 	private static final long CORRECTION_PERIOD = 10;
@@ -44,15 +43,14 @@ public class LightLocalizer {
 	/* (non-Javadoc)
 	 * @see java.lang.Thread#run()
 	 */
-	public void collectData() {
-		fullCircle = false;
+	public void run() {
 		navigation.rightMotor.setSpeed(50);
 		navigation.leftMotor.setSpeed(50);
-		navigation.rightMotor.backward();
-		navigation.leftMotor.forward();
+		//navigation.rightMotor.backward();
+		//navigation.leftMotor.forward();
+		navigation.turnTo(360);
 		
-		while(odometer.getTheta()!=0) {
-			System.out.println(odometer.getTheta());
+		while(navigation.leftMotor.isMoving()&&navigation.rightMotor.isMoving()) {
 			colorSample.fetchSample(lightData, 0); // Get data from color sensor
 		
 			scaledColor = lightData[0]*1000; 
@@ -66,78 +64,21 @@ public class LightLocalizer {
 		}
 		navigation.rightMotor.stop();
 		navigation.leftMotor.stop();
-		
-		
-		
-		/*long correctionStart, correctionEnd;
-		while(true) {
-			correctionStart = System.currentTimeMillis();
-			colorSample.fetchSample(lightData, 0); // Get data from color sensor
-			
-			scaledColor = lightData[0]*1000; 
-		    // Collect data during the ultrasonic localization is running
-		    if(scaledColor < 250) {
-		    		//implement collecting data here
-		    		collectedData[i] = odometer.getTheta();
-		    		i++;
-		    }
-			
-			// this ensure the lightLocalizer occurs only once every period
-		    correctionEnd = System.currentTimeMillis();
-		    if (correctionEnd - correctionStart < CORRECTION_PERIOD) {
-		      try {
-		    	  	Thread.sleep(CORRECTION_PERIOD - (correctionEnd - correctionStart));
-		      } catch (InterruptedException e) {
-		          // there is nothing to be done here because it is not
-		          // expected that the odometry correction will be
-		          // interrupted by another thread
-		      }
-		    }	
-		}*/
+		startLightLocalization();
 	}
 	
 	/**
 	 * localize and go to origin
 	 */
 	void startLightLocalization() {
-			getStart();
-			System.out.println(startArray);
 			//Arc angle from the first time you encounter and axis till the end. 
-			thetaX = collectedData[startArray+3]-collectedData[startArray+1];
-			thetaY = collectedData[startArray+2]-collectedData[startArray];
+			thetaX = collectedData[3]-collectedData[1];
+			thetaY = collectedData[2]-collectedData[0];
 			//Set the new/actual position of the robot.
 			odometer.setY(-sensorToTrack*Math.cos(Math.toRadians(thetaY/2)));
 			odometer.setX(-sensorToTrack*Math.cos(Math.toRadians(thetaX/2)));
-			System.out.println(odometer.getY());
-			System.out.println(odometer.getX());
-			System.out.println(thetaX);
-			System.out.println(thetaY);
-			System.out.println(collectedData[startArray+3]);
-			System.out.println(collectedData[startArray+2]);
-			System.out.println(collectedData[startArray+1]);
-			System.out.println(collectedData[startArray]);
-			
 
 			//Navigate to the origin. 
 			navigation.travelTo(0,0);
-	}
-	
-	/**
-	 * @return the position in the array that are the y axis starting point.
-	 */
-	int getStart() {
-		endCounter =true;
-		if(UltrasonicLocalizer.state == LocalizationState.RISING_EDGE) {
-			for(int i=0; i < collectedData.length; i++) {
-				if(endCounter && (collectedData[i] == 0 || i == collectedData.length-1)) {
-					startArray= i-4;
-					endCounter= false;	
-				}
-			}
-		}
-		else {
-			startArray = 0;
-		}
-		return startArray;
 	}
 }

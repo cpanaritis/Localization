@@ -96,7 +96,6 @@ public class UltrasonicLocalizer {
 			newTheta = odometer.getTheta() + deltaTheta;
 			
 			odometer.setPosition(new double[] {0.0, 0.0, newTheta}, new boolean[]{true,true,true});
-			System.out.println(newTheta);
 			//Make the robot turn to the calculated 0
 			navigation.turnTo(359 - newTheta);
 			

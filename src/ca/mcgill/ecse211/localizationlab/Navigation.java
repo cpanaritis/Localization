@@ -61,7 +61,8 @@ void travelTo(double x, double y) {
 		  else {
 			  turnTo(thetaTurn);
 		  }
-	  
+	  while(leftMotor.isMoving()&&rightMotor.isMoving()) {
+	  }
 	  leftMotor.setSpeed(FORWARD_SPEED);
       rightMotor.setSpeed(FORWARD_SPEED);
       double distance = Math.sqrt(deltaX*deltaX + deltaY*deltaY);
@@ -81,7 +82,7 @@ void turnTo(double theta) {
 	leftMotor.setSpeed(ROTATE_SPEED);
     rightMotor.setSpeed(ROTATE_SPEED);
     leftMotor.rotate(convertAngle(radius, width, theta), true);
-  	rightMotor.rotate(-convertAngle(radius, width, theta), false); 
+  	rightMotor.rotate(-convertAngle(radius, width, theta), true); 
   }
   
   /**
