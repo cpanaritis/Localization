@@ -9,7 +9,7 @@ import lejos.robotics.SampleProvider;
  * @author Christos Panaritis and Keving Chuong
  *
  */
-public class LightLocalizer extends Thread {
+public class LightLocalizer {
 	
 	private Odometer odometer;
 	private SampleProvider colorSample;
@@ -21,6 +21,7 @@ public class LightLocalizer extends Thread {
 	private double thetaX, thetaY;
 	private int startArray;
 	private boolean endCounter;
+	private boolean fullCircle;
 	
 	//Constant(s)
 	private static final long CORRECTION_PERIOD = 10;
@@ -43,8 +44,32 @@ public class LightLocalizer extends Thread {
 	/* (non-Javadoc)
 	 * @see java.lang.Thread#run()
 	 */
-	public void run() {
-		long correctionStart, correctionEnd;
+	public void collectData() {
+		fullCircle = false;
+		navigation.rightMotor.setSpeed(50);
+		navigation.leftMotor.setSpeed(50);
+		navigation.rightMotor.backward();
+		navigation.leftMotor.forward();
+		
+		while(odometer.getTheta()!=0) {
+			System.out.println(odometer.getTheta());
+			colorSample.fetchSample(lightData, 0); // Get data from color sensor
+		
+			scaledColor = lightData[0]*1000; 
+			// Collect data during the ultrasonic localization is running
+			if(scaledColor < 250) {
+	    			//implement collecting data here
+	    			Sound.beep();
+	    			collectedData[i] = odometer.getTheta();
+	    			i++;
+			}
+		}
+		navigation.rightMotor.stop();
+		navigation.leftMotor.stop();
+		
+		
+		
+		/*long correctionStart, correctionEnd;
 		while(true) {
 			correctionStart = System.currentTimeMillis();
 			colorSample.fetchSample(lightData, 0); // Get data from color sensor
@@ -52,7 +77,6 @@ public class LightLocalizer extends Thread {
 			scaledColor = lightData[0]*1000; 
 		    // Collect data during the ultrasonic localization is running
 		    if(scaledColor < 250) {
-		    		Sound.beep();
 		    		//implement collecting data here
 		    		collectedData[i] = odometer.getTheta();
 		    		i++;
@@ -69,7 +93,7 @@ public class LightLocalizer extends Thread {
 		          // interrupted by another thread
 		      }
 		    }	
-		}
+		}*/
 	}
 	
 	/**
@@ -77,7 +101,25 @@ public class LightLocalizer extends Thread {
 	 */
 	void startLightLocalization() {
 			getStart();
-			goToOrigin();
+			System.out.println(startArray);
+			//Arc angle from the first time you encounter and axis till the end. 
+			thetaX = collectedData[startArray+3]-collectedData[startArray+1];
+			thetaY = collectedData[startArray+2]-collectedData[startArray];
+			//Set the new/actual position of the robot.
+			odometer.setY(-sensorToTrack*Math.cos(Math.toRadians(thetaY/2)));
+			odometer.setX(-sensorToTrack*Math.cos(Math.toRadians(thetaX/2)));
+			System.out.println(odometer.getY());
+			System.out.println(odometer.getX());
+			System.out.println(thetaX);
+			System.out.println(thetaY);
+			System.out.println(collectedData[startArray+3]);
+			System.out.println(collectedData[startArray+2]);
+			System.out.println(collectedData[startArray+1]);
+			System.out.println(collectedData[startArray]);
+			
+
+			//Navigate to the origin. 
+			navigation.travelTo(0,0);
 	}
 	
 	/**
@@ -97,20 +139,5 @@ public class LightLocalizer extends Thread {
 			startArray = 0;
 		}
 		return startArray;
-	}
-	
-	/**
-	 * Goes to the origin 
-	 */
-	void goToOrigin() {
-		//Arc angle from the first time you encounter and axis till the end. 
-		thetaX = collectedData[startArray+3]-collectedData[startArray+1];
-		thetaY = collectedData[startArray+2]-collectedData[startArray];
-		//Set the new/actual position of the robot.
-		odometer.setY(-sensorToTrack*Math.cos(Math.toRadians(thetaY/2)));
-		odometer.setX(-sensorToTrack*Math.cos(Math.toRadians(thetaX/2)));
-
-		//Navigate to the origin. 
-		navigation.travelTo(0,0);
 	}
 }

@@ -73,17 +73,16 @@ public static void main(String[] args) {
     		UltrasonicLocalizer localizer = new UltrasonicLocalizer(odometer, LocalizationState.FALLING_EDGE, usSensor, usData, navigation);
     		odometer.start();
     		lcdDisplay.start();
-    		lightLocalizer.start();
     		localizer.localize();
     } 
     else {
     		UltrasonicLocalizer localizer = new UltrasonicLocalizer(odometer, LocalizationState.RISING_EDGE, usSensor, usData, navigation);
     		odometer.start();
     		lcdDisplay.start();
-    		lightLocalizer.start();
     		localizer.localize();
     }
     while(Button.waitForAnyPress() != Button.ID_ENTER);
+    lightLocalizer.collectData();
     lightLocalizer.startLightLocalization();
     	
     	while(Button.waitForAnyPress() != Button.ID_ESCAPE);

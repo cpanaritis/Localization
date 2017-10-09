@@ -14,9 +14,6 @@ public class Navigation {
 	
   private static final int FORWARD_SPEED = 50;
   private static final int ROTATE_SPEED = 50;
-  private static double[][] waypoints = new double[][] {
-	  										{1, 0, 2, 2, 1 },  // Row 0 is x coordinates
-	  										{1, 2, 2, 1, 0 } };// Row 1 is y coordinates
   public EV3LargeRegulatedMotor leftMotor;
   public EV3LargeRegulatedMotor rightMotor;
   double amountTurned;
@@ -24,16 +21,7 @@ public class Navigation {
   private double width;
   private Odometer odometer;
   public boolean navigating; 
-  private int whichPoint = 0;
-  private double lastTheta;
-  private int distanceFromBlock;
   public boolean active = false;  // Checks if avoidance should run or not (bang bang)
-  public static final int bandCenter = 8; // Offset from the wall (cm)
-  private static final int bandWidth = 2; // Width of dead band (cm)
-
-  private int filterControl;
-  private static final int FILTER_OUT = 20;
-
   
 
   /**
