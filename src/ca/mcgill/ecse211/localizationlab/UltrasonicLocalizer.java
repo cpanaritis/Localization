@@ -20,7 +20,7 @@ public class UltrasonicLocalizer {
 	//Constants 
 	private final int THRESHOLD_WALL = 35;
 	private final int NOISE_GAP = 1;
-	private final int TURN_SPEED = 50;
+	private final int TURN_SPEED = 100;
 	
 	//Booleans
 	private boolean isCompleted = false;

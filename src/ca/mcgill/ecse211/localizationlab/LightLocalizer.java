@@ -19,11 +19,9 @@ public class LightLocalizer extends Thread {
 	private double [] collectedData = new double [4];
 	private int i = 0;
 	private double thetaX, thetaY;
-	private int startArray;
-	private boolean endCounter;
-	
+	private double deltaTheta; 
+
 	//Constant(s)
-	private static final long CORRECTION_PERIOD = 10;
 	private static final double sensorToTrack = 14.2;
 	
 	
@@ -77,9 +75,12 @@ public class LightLocalizer extends Thread {
 			//Set the new/actual position of the robot.
 			odometer.setY(-sensorToTrack*Math.cos(Math.toRadians(thetaY/2)));
 			odometer.setX(-sensorToTrack*Math.cos(Math.toRadians(thetaX/2)));
+			//Correct angle 
+			deltaTheta = 90-(collectedData[3]-180)+thetaX/2;
+			odometer.setTheta(odometer.getTheta()+deltaTheta);
 
 			//Navigate to the origin. 
 			navigation.travelTo(0,0);
-			navigation.turnTo(-odometer.getTheta());
+			navigation.turnTo(-(odometer.getTheta()));
 	}
 }
