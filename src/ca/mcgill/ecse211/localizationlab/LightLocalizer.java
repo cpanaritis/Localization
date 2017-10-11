@@ -77,7 +77,7 @@ public class LightLocalizer extends Thread {
 			odometer.setX(-sensorToTrack*Math.cos(Math.toRadians(thetaX/2)));
 			//Correct angle 
 			deltaTheta = 90-(collectedData[3]-180)+thetaX/2;
-			odometer.setTheta(odometer.getTheta()+deltaTheta);
+			odometer.setTheta(deltaTheta);
 
 			//Navigate to the origin. 
 			navigation.travelTo(0,0);
